@@ -16,7 +16,7 @@ jobs:
         with:
           sparse-checkout: |
             .github/workflows/cd.yml
-          sparse-checkout-cone-mode-changes: false
+          sparse-checkout-cone-mode: false
 
       - name: Deploy to Server
         uses: appleboy/ssh-action@v1.0.0
@@ -30,3 +30,6 @@ jobs:
             git pull origin main
             pnpm install --frozen-lockfile
             pnpm build
+            rm -rf /var/www/cicd1
+            cp -r dist /var/www/cicd1
+            chown -R www-data:www-data /var/www/cicd1
