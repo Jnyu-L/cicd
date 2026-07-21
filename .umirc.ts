@@ -1,6 +1,9 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
+  publicPath: process.env.APP_VERSION
+    ? `/releases/${process.env.APP_VERSION}/`
+    : '/',
   antd: {},
   access: {},
   model: {},

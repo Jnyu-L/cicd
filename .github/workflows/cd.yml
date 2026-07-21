@@ -26,11 +26,50 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           port: ${{ secrets.SERVER_PORT }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+
           script: |
+            set -e
+
             cd ${{ secrets.SERVER_DEPLOY_PATH }}
+
+            echo "Pull latest code..."
             git pull origin main
+
+
+            echo "Install dependencies..."
             pnpm install --frozen-lockfile
-            pnpm build
-            rm -rf /var/www/cicd1
-            cp -r dist /var/www/cicd1
+
+
+            VERSION=v$(date +%Y%m%d_%H%M%S)
+
+            echo "Current deploy version: ${VERSION}"
+
+
+            echo "Build project..."
+            APP_VERSION=${VERSION} pnpm build
+
+
+            RELEASE_DIR=/var/www/cicd1/releases/${VERSION}
+
+            echo "Create release directory..."
+            mkdir -p ${RELEASE_DIR}
+
+
+            echo "Copy dist files..."
+            cp -r dist/* ${RELEASE_DIR}/
+
+
+            echo "Switch current version..."
+
+            cd /var/www/cicd1
+
+            ln -sfn releases/${VERSION} current
+
+
+            echo "Set permissions..."
+
             chown -R www-data:www-data /var/www/cicd1
+
+
+            echo "Deploy success!"
+            echo "Current version: ${VERSION}"
