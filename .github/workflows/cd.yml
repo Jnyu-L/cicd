@@ -12,14 +12,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           sparse-checkout: |
-            .github/workflows/cd.yml
+            *
+            .github
           sparse-checkout-cone-mode: false
 
       - name: Deploy to Server
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
